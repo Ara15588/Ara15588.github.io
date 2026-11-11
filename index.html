@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DeepSleep</title>
+<meta name="description" content="DeepSleep is an independent game developer. Home of TrayMaster.">
+<link rel="icon" type="image/png" href="assets/deepsleep-ghost.png">
+<style>
+  /* Brand colours come from the DeepSleep logo: navy ink on a blush ground. */
+  :root {
+    --bg: #f8ebe5;
+    --surface: #fffaf7;
+    --ink: #0e3150;
+    --text: #0e3150;
+    --muted: #5a6a7e;
+    --line: #ead6cc;
+    --button: #0e3150;
+    --button-ink: #f8ebe5;
+    --star: transparent;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0b2038;
+      --surface: #11294a;
+      --ink: #f8ebe5;
+      --text: #f3e6e0;
+      --muted: #a7b4c6;
+      --line: #1f3b60;
+      --button: #f8ebe5;
+      --button-ink: #0e3150;
+      --star: rgba(248, 235, 229, 0.5);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0b2038;
+    --surface: #11294a;
+    --ink: #f8ebe5;
+    --text: #f3e6e0;
+    --muted: #a7b4c6;
+    --line: #1f3b60;
+    --button: #f8ebe5;
+    --button-ink: #0e3150;
+    --star: rgba(248, 235, 229, 0.5);
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 16px; }
+  a { color: var(--text); }
+  :focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; border-radius: 4px; }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+
+  /* Masthead: the logo, drawn as a mask so it takes the theme's ink colour */
+  .masthead {
+    padding: 72px 0 56px;
+    text-align: center;
+    background:
+      radial-gradient(1.5px 1.5px at 12% 28%, var(--star) 50%, transparent 51%),
+      radial-gradient(1px 1px at 24% 70%, var(--star) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 38% 14%, var(--star) 50%, transparent 51%),
+      radial-gradient(1px 1px at 66% 22%, var(--star) 50%, transparent 51%),
+      radial-gradient(1px 1px at 78% 64%, var(--star) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 88% 34%, var(--star) 50%, transparent 51%);
+  }
+  .masthead h1 { margin: 0; }
+  .logo {
+    display: block;
+    width: min(300px, 72vw);
+    aspect-ratio: 500 / 470;
+    margin: 0 auto;
+    background: var(--ink);
+    -webkit-mask: url("assets/deepsleep-logo.png") center / contain no-repeat;
+            mask: url("assets/deepsleep-logo.png") center / contain no-repeat;
+  }
+  .tagline {
+    margin: 22px auto 0;
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 30em;
+    text-wrap: balance;
+  }
+
+  /* Games */
+  main { padding: 8px 0 72px; }
+  .section-label {
+    margin: 0 0 18px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .section-label::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+  .games { display: grid; gap: 24px; }
+  .game {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .game .banner { display: block; line-height: 0; }
+  .game .banner img { width: 100%; height: auto; aspect-ratio: 1024 / 500; object-fit: cover; }
+  .game-body {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 6px 18px;
+    padding: 22px 22px 24px;
+    align-items: start;
+  }
+  .game-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 16px;
+    grid-row: span 2;
+    margin-top: -48px;
+    border: 3px solid var(--surface);
+    background: #000;
+  }
+  .game h3 { margin: 0; font-size: 1.5rem; line-height: 1.2; letter-spacing: -0.01em; }
+  .game .genre { margin: 0; color: var(--muted); font-size: 0.95rem; }
+  .game p.desc { grid-column: 1 / -1; margin: 10px 0 4px; max-width: 60ch; }
+  .actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin-top: 10px; }
+  .button {
+    display: inline-block;
+    background: var(--button);
+    color: var(--button-ink);
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .button:hover { opacity: 0.9; }
+  .actions .link { color: var(--muted); font-size: 0.95rem; }
+  .actions .link:hover { color: var(--text); }
+
+  footer {
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.9rem;
+    padding: 22px 0 36px;
+  }
+  footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; }
+  footer a { color: var(--muted); }
+
+  @media (max-width: 520px) {
+    .masthead { padding: 52px 0 40px; }
+    .game-body { padding: 18px 16px 20px; }
+    .game-icon { width: 60px; height: 60px; margin-top: -40px; }
+    .game h3 { font-size: 1.3rem; }
+  }
+</style>
+</head>
+<body>
+  <header class="masthead">
+    <div class="wrap">
+      <h1><span class="logo" role="img" aria-label="DeepSleep"></span></h1>
+      <p class="tagline">An independent game developer making small, playful mobile games.</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <h2 class="section-label">Games</h2>
+      <div class="games">
+        <article class="game">
+          <a class="banner" href="https://ara15588.github.io/traymaster-pages/" tabindex="-1" aria-hidden="true">
+            <img src="assets/traymaster-banner.jpg" alt="" width="1024" height="500">
+          </a>
+          <div class="game-body">
+            <img class="game-icon" src="assets/traymaster-icon.jpg" alt="TrayMaster icon" width="72" height="72">
+            <h3>TrayMaster</h3>
+            <p class="genre">Android &middot; Arcade</p>
+            <p class="desc">Load, carry and balance trays of food for hungry customers without dropping a thing.</p>
+            <div class="actions">
+              <a class="button" href="https://play.google.com/store/apps/details?id=com.DeepSleep.TrayMaster">Get it on Google Play</a>
+              <a class="link" href="https://ara15588.github.io/traymaster-pages/">Game website</a>
+              <a class="link" href="https://ara15588.github.io/traymaster-pages/privacy/">Privacy policy</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>&copy; 2026 DeepSleep</span>
+      <a href="mailto:deepsleepover9000@gmail.com">deepsleepover9000@gmail.com</a>
+    </div>
+  </footer>
+</body>
+</html>
